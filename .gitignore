@@ -1,0 +1,5 @@
+*.suo
+*.user
+/SipekSdk/obj
+/SipekSdk/Lib
+/packages

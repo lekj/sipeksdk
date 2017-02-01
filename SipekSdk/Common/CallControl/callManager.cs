@@ -370,7 +370,7 @@ namespace Sipek.Common.CallControl
           call.Session = newsession;
           _calls.Add(newsession, call);
         }
-        catch (ArgumentException e)
+        catch (ArgumentException)
         {
           // previous call not released ()
           // first release old one
@@ -430,7 +430,7 @@ namespace Sipek.Common.CallControl
           call.Session = newsession;
           _calls.Add(newsession, call);
         }
-        catch (ArgumentException e)
+        catch (ArgumentException)
         {
           // previous call not released ()
           // first release old one
