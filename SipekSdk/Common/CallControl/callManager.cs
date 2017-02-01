@@ -40,10 +40,8 @@
     Call control...
 */
 
-using System.Collections;
-using System.Collections.Generic;
 using System;
-using Sipek.Common;
+using System.Collections.Generic;
 
 namespace Sipek.Common.CallControl
 {
@@ -57,11 +55,11 @@ namespace Sipek.Common.CallControl
   /// Main telephony class. Manages call instances. Handles user events and dispatches to a proper 
   /// call instance automaton. 
   /// </summary>
-  public class CCallManager
+  public class CallManager
   {
     #region Variables
 
-    private static CCallManager _instance = null;
+    private static CallManager _instance = null;
 
     private Dictionary<int, IStateMachine> _calls;  //!< Call table
 
@@ -174,11 +172,11 @@ namespace Sipek.Common.CallControl
     /// CCallManager Singleton
     /// </summary>
     /// <returns></returns>
-    public static CCallManager Instance
+    public static CallManager Instance
     {
       get
       {
-        if (_instance == null) _instance = new CCallManager();
+        if (_instance == null) _instance = new CallManager();
         return _instance;
       }
     }
@@ -238,13 +236,13 @@ namespace Sipek.Common.CallControl
         switch (_actionType)
         {
           case EPendingActions.EUserAnswer:
-            CCallManager.Instance.OnUserAnswer(_sessionId);
+            Instance.OnUserAnswer(_sessionId);
             break;
           case EPendingActions.ECreateSession:
-            CCallManager.Instance.CreateSmartOutboundCall(_number, _accountId);
+            Instance.CreateSmartOutboundCall(_number, _accountId);
         	  break;
           case EPendingActions.EUserHold:
-            CCallManager.Instance.OnUserHoldRetrieve(_sessionId);
+            Instance.OnUserHoldRetrieve(_sessionId);
             break;
         }
       }
