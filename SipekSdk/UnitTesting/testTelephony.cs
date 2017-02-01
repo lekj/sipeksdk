@@ -178,7 +178,7 @@ namespace UnitTest
   {
     MockFactory _mockFactory = new MockFactory();
     public MockCommonProxy _proxy = new MockCommonProxy();
-    CCallManager _manager = CCallManager.Instance;
+    CallManager _manager = CallManager.Instance;
 
     [SetUp]
     public void Init()
