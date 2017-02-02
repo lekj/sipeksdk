@@ -78,35 +78,36 @@ namespace Sipek.Sip
 		internal const string PJSIP_DLL = "pjsipdll_tls.dll"; 
 #else
     internal const string PJSIP_DLL = "pjsipDll.dll";
+		private const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 #endif
 
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_init")]
+		[DllImport(PJSIP_DLL, EntryPoint = "dll_init", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_init();
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_main")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_main", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_main();
-    [DllImport(PJSIP_DLL,EntryPoint= "dll_shutdown")]
+    [DllImport(PJSIP_DLL,EntryPoint= "dll_shutdown", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_shutdown();
-    [DllImport(PJSIP_DLL,EntryPoint="dll_setSipConfig")]
+    [DllImport(PJSIP_DLL,EntryPoint="dll_setSipConfig", CallingConvention = CALLING_CONVENTION)]
     private static extern void dll_setSipConfig(SipConfigStruct config);
 
-    [DllImport(PJSIP_DLL,EntryPoint= "dll_getCodec")]
+    [DllImport(PJSIP_DLL,EntryPoint= "dll_getCodec", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_getCodec(int index, StringBuilder codec);
-    [DllImport(PJSIP_DLL,EntryPoint= "dll_getNumOfCodecs")]
+    [DllImport(PJSIP_DLL,EntryPoint= "dll_getNumOfCodecs", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_getNumOfCodecs();
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_setCodecPriority")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_setCodecPriority", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_setCodecPriority(string name, int prio);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_setSoundDevice")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_setSoundDevice", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_setSoundDevice(string playbackDeviceId, string recordingDeviceId);
 
     #endregion Wrapper functions
 
     #region Callback declarations
 
-        [DllImport(PJSIP_DLL, EntryPoint = "onDtmfDigitCallback")]
+        [DllImport(PJSIP_DLL, EntryPoint = "onDtmfDigitCallback", CallingConvention = CALLING_CONVENTION)]
     private static extern int onDtmfDigitCallback(OnDtmfDigitCallback cb);
-        [DllImport(PJSIP_DLL, EntryPoint = "onMessageWaitingCallback")]
+        [DllImport(PJSIP_DLL, EntryPoint = "onMessageWaitingCallback", CallingConvention = CALLING_CONVENTION)]
     private static extern int onMessageWaitingCallback(OnMessageWaitingCallback cb);
-    [DllImport(PJSIP_DLL, EntryPoint = "onCallReplaced")]
+    [DllImport(PJSIP_DLL, EntryPoint = "onCallReplaced", CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallReplacedCallback(OnCallReplacedCallback cb);
 
     static OnDtmfDigitCallback dtdel = new OnDtmfDigitCallback(onDtmfDigitCallback);

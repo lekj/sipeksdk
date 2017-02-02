@@ -41,15 +41,16 @@ namespace Sipek.Sip
 		internal const string PJSIP_DLL = "pjsipdll_tls.dll"; 
 #else
     internal const string PJSIP_DLL = "pjsipDll.dll";
+		private const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 #endif
 
-    [DllImport(PJSIP_DLL,EntryPoint="dll_addBuddy")]
+		[DllImport(PJSIP_DLL,EntryPoint="dll_addBuddy", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_addBuddy(string uri, bool subscribe);
-    [DllImport(PJSIP_DLL,EntryPoint="dll_removeBuddy")]
+    [DllImport(PJSIP_DLL,EntryPoint="dll_removeBuddy", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_removeBuddy(int buddyId);
-    [DllImport(PJSIP_DLL,EntryPoint="dll_sendMessage")]
+    [DllImport(PJSIP_DLL,EntryPoint="dll_sendMessage", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_sendMessage(int buddyId, string uri, string message);
-    [DllImport(PJSIP_DLL,EntryPoint="dll_setStatus")]
+    [DllImport(PJSIP_DLL,EntryPoint="dll_setStatus", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_setStatus(int accId, int presence_state);
     #endregion 
 

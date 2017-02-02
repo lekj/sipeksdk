@@ -51,6 +51,7 @@ namespace Sipek.Sip
 		internal const string PJSIP_DLL = "pjsipdll_tls.dll"; 
 #else
     internal const string PJSIP_DLL = "pjsipDll.dll";
+		private const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 #endif
 
     // call API
@@ -83,11 +84,11 @@ namespace Sipek.Sip
 
     #region Callback Declarations
     // passing delegates to unmanaged code (.dll)
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallStateCallback(OnCallStateChanged cb);
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallIncoming(OnCallIncoming cb);
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallHoldConfirmCallback(OnCallHoldConfirm cb);
 
     // Static declaration because of CallbackonCollectedDelegate exception!
