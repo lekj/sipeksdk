@@ -40,6 +40,7 @@
     Call control...
 */
 
+using Sipek.Sip;
 using System;
 using System.Collections.Generic;
 
@@ -194,6 +195,7 @@ namespace Sipek.Common.CallControl
 
 		public event DIncomingCallNotification IncomingCallNotification;
 
+		public event DAccountStateChanged AccountStateChanged;
 
 		/// <summary>
 		/// Action definitions for pending events.
@@ -268,6 +270,21 @@ namespace Sipek.Common.CallControl
 
 		#region Public methods
 
+		public void RegisterAccounts(IConfiguratorInterface config)
+		{
+			Config = config;
+			pjsipStackProxy.Instance.Config = config;
+			pjsipRegistrar.Instance.Config = config;
+			Initialize(pjsipStackProxy.Instance);
+			pjsipRegistrar.Instance.registerAccounts();
+		}
+
+		public void UnRegisterAccounts()
+		{
+			pjsipRegistrar.Instance.unregisterAccounts();
+			Shutdown();
+		}
+
 		/// <summary>
 		/// Initialize telephony and VoIP stack. On success register accounts.
 		/// </summary>
@@ -284,6 +301,7 @@ namespace Sipek.Common.CallControl
 				ICallProxyInterface.CallStateChanged += OnCallStateChanged;
 				ICallProxyInterface.CallIncoming += OnIncomingCall;
 				ICallProxyInterface.CallNotification += OnCallNotification;
+				pjsipRegistrar.Instance.AccountStateChanged += OnAccountStateChanged;
 
 				// Initialize call table
 				_calls = new Dictionary<int, IStateMachine>();
@@ -317,10 +335,12 @@ namespace Sipek.Common.CallControl
 
 			CallStateRefresh = null;
 			IncomingCallNotification = null;
+			AccountStateChanged = null;
 
 			ICallProxyInterface.CallStateChanged -= OnCallStateChanged;
 			ICallProxyInterface.CallIncoming -= OnIncomingCall;
 			ICallProxyInterface.CallNotification -= OnCallNotification;
+			pjsipRegistrar.Instance.AccountStateChanged -= OnAccountStateChanged;
 			StackProxy.CallReplaced -= OnCallReplaced;
 		}
 
@@ -710,6 +730,14 @@ namespace Sipek.Common.CallControl
 			}
 		}
 
+		private void OnAccountStateChanged(int iAccountId, int iAccState)
+		{
+			if (AccountStateChanged != null)
+			{
+				AccountStateChanged(iAccountId, iAccountId);
+			}
+		}
+
 		/// <summary>
 		/// Replace call ids
 		/// </summary>
@@ -746,99 +774,5 @@ namespace Sipek.Common.CallControl
 		}
 
 		#endregion Methods
-
-		#region Obsolete Methods 
-		// Thanks to Ian Kemp
-
-		[Obsolete("Use the CreateSmartOutboundCall(string number) method instead.")]
-		public IStateMachine createOutboundCall(string number)
-		{
-			return this[CreateSmartOutboundCall(number, Config.DefaultAccountIndex)];
-		}
-
-		[Obsolete("Use the CreateSmartOutboundCall(string number, int accountId) method instead")]
-		public IStateMachine createOutboundCall(string number, int accountId)
-		{
-			return this[CreateSmartOutboundCall(number, accountId)];
-		}
-
-		[Obsolete("Use the CallManager call indexer property instead")]
-		public IStateMachine getCall(int session)
-		{
-			return this[session];
-		}
-
-		[Obsolete("Use the CallManager StateId indexer property instead")]
-		public IStateMachine getCallInState(EStateId stateId)
-		{
-			List<IStateMachine> calls = this[stateId];
-			if (calls.Count == 0)
-			{
-				return new NullStateMachine();
-			}
-			return calls[0];
-		}
-
-		[Obsolete("Use the CallManager StateId indexer property instead")]
-		public ICollection<IStateMachine> enumCallsInState(EStateId stateId)
-		{
-			return this[stateId];
-		}
-
-		[Obsolete("Use the CallManager StateId indexer property instead")]
-		public int getNoCallsInState(EStateId stateId)
-		{
-			return this[stateId].Count;
-		}
-
-		[Obsolete("Use the OnUserRelease(int session) method instead")]
-		public void onUserRelease(int session)
-		{
-			this.OnUserRelease(session);
-		}
-
-		[Obsolete("Use the OnUserAnswer(int session) method instead")]
-		public void onUserAnswer(int session)
-		{
-			this.OnUserAnswer(session);
-		}
-
-		[Obsolete("Use the OnUserHoldRetrieve(int session) method instead")]
-		public void onUserHoldRetrieve(int session)
-		{
-			this.OnUserHoldRetrieve(session);
-		}
-
-		[Obsolete("Use the onUserTransfer(int session, string number) method instead")]
-		public void onUserTransfer(int session, string number)
-		{
-			this.OnUserTransfer(session, number);
-		}
-
-		[Obsolete("Use the OnUserDialDigit(int session, string digits, EDtmfMode mode) method instead")]
-		public void onUserDialDigit(int session, string digits, EDtmfMode mode)
-		{
-			this.OnUserDialDigit(session, digits, mode);
-		}
-
-		[Obsolete("Use the OnUserConference(int session) method instead")]
-		public void onUserConference(int session)
-		{
-			this.OnUserConference(session);
-		}
-
-		[Obsolete("Use the OnUserSendCallMessage(int session, string message) method instead")]
-		public bool onUserSendCallMessage(int sessionId, string message)
-		{
-			return this.OnUserSendCallMessage(sessionId, message);
-		}
-
-		[Obsolete("Use the Initialize(IVoipProxy stack) method")]
-		public int Initialize()
-		{
-			return this.Initialize(_stack);
-		}
-
-		#endregion
 	}
 }

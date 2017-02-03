@@ -1,6 +1,5 @@
 ﻿using Sipek.Common;
 using Sipek.Common.CallControl;
-using Sipek.Sip;
 using System;
 using System.Windows.Forms;
 
@@ -27,19 +26,6 @@ namespace TestSoftphone
 			InitializeComponent();
         }
 
-		protected override void OnLoad(EventArgs e)
-		{
-			CallManager.CallStateRefresh += CallManager_CallStateRefresh;
-			pjsipRegistrar.Instance.AccountStateChanged += Instance_AccountStateChanged;
-			CallManager.StackProxy = pjsipStackProxy.Instance;
-			CallManager.Config = phoneConfig;
-			pjsipStackProxy.Instance.Config = phoneConfig;
-			pjsipRegistrar.Instance.Config = phoneConfig;
-			CallManager.Initialize();
-			pjsipRegistrar.Instance.registerAccounts();
-			CallManager.IncomingCallNotification += CallManager_IncomingCall;
-		}
-
 		private void RunSync(Action action)
 		{
 			if (InvokeRequired)
@@ -52,7 +38,7 @@ namespace TestSoftphone
 			}
 		}
 
-		private void Instance_AccountStateChanged(int iAccountId, int iAccState)
+		private void CallManager_AccountStateChanged(int iAccountId, int iAccState)
 		{
 			RunSync(() => RegStateBox.Text = iAccState.ToString());
 		}
@@ -70,7 +56,8 @@ namespace TestSoftphone
 
 		private void MakeCallBtn_Click(object sender, EventArgs e)
 		{
-			call = CallManager.createOutboundCall(PhoneBox.Text);
+			var sessionId = CallManager.CreateSmartOutboundCall(PhoneBox.Text, phoneConfig.DefaultAccountIndex);
+            call = CallManager[sessionId];
 		}
 
 		private void RealeaseBtn_Click(object sender, EventArgs e)
@@ -82,6 +69,23 @@ namespace TestSoftphone
 		private void TakeBtn_Click(object sender, EventArgs e)
 		{
 			CallManager.OnUserAnswer(call.Session);
+		}
+
+		private void StartBtn_Click(object sender, EventArgs e)
+		{
+			if (CallManager.IsInitialized)
+			{
+				CallManager.UnRegisterAccounts();
+				StartBtn.Text = "START";
+			}
+			else
+			{
+				CallManager.CallStateRefresh += CallManager_CallStateRefresh;
+				CallManager.AccountStateChanged += CallManager_AccountStateChanged;
+				CallManager.IncomingCallNotification += CallManager_IncomingCall;
+				CallManager.RegisterAccounts(phoneConfig);
+				StartBtn.Text = "STOP";
+			}
 		}
 	}
 }

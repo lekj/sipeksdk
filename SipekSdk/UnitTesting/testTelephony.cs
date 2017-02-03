@@ -202,7 +202,7 @@ namespace UnitTest
     /// 
     private IStateMachine makeOutgoingCall()
     {
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
 
       Assert.AreEqual(EStateId.CONNECTING, sm1.StateId);
       Assert.AreEqual(false, sm1.Incoming);
@@ -829,7 +829,7 @@ namespace UnitTest
     {
       Assert.AreEqual(0, _manager.Count);
       // create a call instance
-      IStateMachine sm = _manager.createOutboundCall("1234");
+      IStateMachine sm = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       Assert.AreEqual(1, _manager.Count);
       // check if index match
       Assert.AreEqual(sm, _manager[sm.Session]);
@@ -842,7 +842,7 @@ namespace UnitTest
       Assert.AreEqual(EStateId.NULL, _manager[1].StateId);
 
       // Many call instances
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       IStateMachine sm2 = this.makeIncomingCall(2);
       // check if index match
       Assert.AreEqual(sm1, _manager[sm1.Session]);
@@ -856,7 +856,7 @@ namespace UnitTest
     [Test]
     public void testCallManagerStateIdIndexer()
     {
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       IStateMachine sm2 = this.makeIncomingCall(2);
 
       Assert.AreEqual(2, _manager.Count);
