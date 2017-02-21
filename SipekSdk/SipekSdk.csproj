@@ -82,7 +82,6 @@
     <Compile Include="Sip\pjsipRegistrar.cs" />
     <Compile Include="Sip\pjsipWrapper.cs" />
     <Compile Include="Sip\pjsipConfig.cs" />
-    <Compile Include="UnitTesting\testBuddyList.cs" />
     <Compile Include="UnitTesting\testTelephony.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -270,18 +270,28 @@ namespace Sipek.Common.CallControl
 
 		#region Public methods
 
-		public void RegisterAccounts(IConfiguratorInterface config)
+		public bool RegisterAccounts(IConfiguratorInterface config)
 		{
 			Config = config;
 			pjsipStackProxy.Instance.Config = config;
 			pjsipRegistrar.Instance.Config = config;
 			Initialize(pjsipStackProxy.Instance);
-			pjsipRegistrar.Instance.registerAccounts();
+
+			if (IsInitialized)
+			{
+				pjsipRegistrar.Instance.registerAccounts();
+			}
+
+			return IsInitialized;
 		}
 
 		public void UnRegisterAccounts()
 		{
-			pjsipRegistrar.Instance.unregisterAccounts();
+			if (IsInitialized)
+			{
+				pjsipRegistrar.Instance.unregisterAccounts();
+			}
+
 			Shutdown();
 		}
 
