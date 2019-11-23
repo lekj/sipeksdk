@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Sipek.Common;
 using Sipek.Common.CallControl;
 
@@ -179,7 +178,7 @@ namespace UnitTest
   {
     MockFactory _mockFactory = new MockFactory();
     public MockCommonProxy _proxy = new MockCommonProxy();
-    CCallManager _manager = CCallManager.Instance;
+    CallManager _manager = CallManager.Instance;
 
     [SetUp]
     public void Init()
@@ -203,7 +202,7 @@ namespace UnitTest
     /// 
     private IStateMachine makeOutgoingCall()
     {
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
 
       Assert.AreEqual(EStateId.CONNECTING, sm1.StateId);
       Assert.AreEqual(false, sm1.Incoming);
@@ -229,7 +228,7 @@ namespace UnitTest
       string number = "1234";
       MockSipCallProxy.OnCallStateChanged(sessionId, ESessionState.SESSION_STATE_INCOMING, "");
       MockSipCallProxy.onIncomingCall(sessionId, number, "");
-      IStateMachine sm1 = _manager.getCall(sessionId);
+      IStateMachine sm1 = _manager[sessionId];
       //sm1.State.incomingCall(number,"");
 
       //sm1.changeState(EStateId.INCOMING);
@@ -248,7 +247,7 @@ namespace UnitTest
       //CStateMachine sm1 = _manager.createSession(sessionId, number);
       MockSipCallProxy.OnCallStateChanged(sessionId, ESessionState.SESSION_STATE_INCOMING, "");
       MockSipCallProxy.onIncomingCall(sessionId, number, "");
-      IStateMachine sm1 = _manager.getCall(sessionId);
+      IStateMachine sm1 = _manager[sessionId];
       //sm1.State.incomingCall(number, "");
 
       //sm1.changeState(EStateId.INCOMING);
@@ -257,7 +256,7 @@ namespace UnitTest
 
       Assert.AreEqual(sm1.RuntimeDuration, TimeSpan.Zero);
 
-      _manager.onUserAnswer(sm1.Session);
+      _manager.OnUserAnswer(sm1.Session);
       //sm1.State.acceptCall(sm1.Session);
       //sm1.changeState(EStateId.ACTIVE);
       Assert.AreEqual(EStateId.ACTIVE, sm1.StateId);
@@ -290,7 +289,7 @@ namespace UnitTest
       Assert.AreEqual(EStateId.RELEASED, sm.StateId);
       Assert.AreEqual("RELEASED", sm.StateId.ToString());
 
-      sm.destroy();
+      sm.Destroy();
   
     }
 
@@ -317,7 +316,7 @@ namespace UnitTest
       Assert.AreEqual(EStateId.RELEASED, sm.StateId);
       Assert.AreEqual("RELEASED", sm.StateId.ToString());
 
-      sm.destroy();
+      sm.Destroy();
 
       // Second
       sm = new CStateMachine();
@@ -338,7 +337,7 @@ namespace UnitTest
       sm.ChangeState(EStateId.RELEASED);
       Assert.AreEqual(EStateId.RELEASED, sm.StateId);
       Assert.AreEqual("RELEASED", sm.StateId.ToString());
-      sm.destroy();
+      sm.Destroy();
 
       // third
 
@@ -360,7 +359,7 @@ namespace UnitTest
       sm.ChangeState(EStateId.RELEASED);
       Assert.AreEqual(EStateId.RELEASED, sm.StateId);
       Assert.AreEqual("RELEASED", sm.StateId.ToString());
-      sm.destroy();
+      sm.Destroy();
     }
 
     [Test]
@@ -390,9 +389,9 @@ namespace UnitTest
       sm3.ChangeState(EStateId.CONNECTING);
       Assert.AreEqual(EStateId.CONNECTING, sm3.StateId);
 
-      sm1.destroy();
-      sm2.destroy();
-      sm3.destroy();
+      sm1.Destroy();
+      sm2.Destroy();
+      sm3.Destroy();
 
       Assert.AreEqual(EStateId.IDLE, sm1.StateId);
       Assert.AreEqual(EStateId.IDLE, sm2.StateId);
@@ -411,7 +410,7 @@ namespace UnitTest
       // changing state
       sm1.ChangeState(EStateId.INCOMING);
       Assert.AreEqual(EStateId.INCOMING, sm1.StateId);
-      sm1.destroy();
+      sm1.Destroy();
 
       CStateMachine sm2 = new CStateMachine();
       Assert.AreEqual(-1, sm2.Session);
@@ -421,7 +420,7 @@ namespace UnitTest
       sm2.ChangeState(EStateId.ALERTING);
       Assert.AreEqual(EStateId.ALERTING, sm2.StateId);
 
-      sm2.destroy();
+      sm2.Destroy();
 
       CStateMachine sm3 = new CStateMachine();
       Assert.AreEqual(-1, sm3.Session);
@@ -431,7 +430,7 @@ namespace UnitTest
       sm3.ChangeState(EStateId.CONNECTING);
       Assert.AreEqual(EStateId.CONNECTING, sm3.StateId);
 
-      sm3.destroy();
+      sm3.Destroy();
 
       Assert.AreEqual(EStateId.IDLE, sm1.StateId);
       Assert.AreEqual(EStateId.IDLE, sm2.StateId);
@@ -457,7 +456,7 @@ namespace UnitTest
       Assert.AreEqual(true, sm1.Incoming);
       Assert.AreNotSame(sm1.RuntimeDuration, TimeSpan.Zero);
 
-      sm1.destroy();
+      sm1.Destroy();
     }
 
     [Test]
@@ -483,7 +482,7 @@ namespace UnitTest
       Assert.AreEqual(true, sm1.Counting);
       Assert.AreNotSame(sm1.RuntimeDuration, TimeSpan.Zero);
 
-      sm1.destroy();
+      sm1.Destroy();
     }
 
     [Test]
@@ -752,14 +751,14 @@ namespace UnitTest
       IStateMachine smInc = makeIncomingCall(2); // 1st call reserve sessionId 1 (nullproxy)
 
       // accept incoming
-      _manager.onUserAnswer(smInc.Session);
+      _manager.OnUserAnswer(smInc.Session);
       smOut.State.onHoldConfirm();
 
       Assert.AreEqual(EStateId.ACTIVE, smInc.StateId);
       Assert.AreEqual(EStateId.HOLDING, smOut.StateId);
 
       // Retrieve 
-      _manager.onUserHoldRetrieve(smOut.Session);
+      _manager.OnUserHoldRetrieve(smOut.Session);
       smInc.State.onHoldConfirm();
 
       Assert.AreEqual(EStateId.HOLDING, smInc.StateId);
@@ -781,21 +780,21 @@ namespace UnitTest
       //CStateMachine inccall = _manager.createSession(2, "1234");
       MockSipCallProxy.OnCallStateChanged(2, ESessionState.SESSION_STATE_INCOMING, "");
       MockSipCallProxy.onIncomingCall(2, "1234", "");
-      IStateMachine inccall = _manager.getCall(2);
+      IStateMachine inccall = _manager[2];
       //inccall.State.incomingCall("1234", "");
       // nothing changed yet (waiting Hold Conf)
       Assert.AreEqual(EStateId.ACTIVE, call.StateId);
       Assert.AreEqual(EStateId.INCOMING, inccall.StateId);
 
-      _manager.onUserAnswer(inccall.Session); // set pending action
+      _manager.OnUserAnswer(inccall.Session); // set pending action
       // hold conf
       call.State.onHoldConfirm();
       // states changed
       Assert.AreEqual(EStateId.HOLDING, call.StateId);
       Assert.AreEqual(EStateId.ACTIVE, inccall.StateId);
 
-      call.destroy();
-      inccall.destroy();
+      call.Destroy();
+      inccall.Destroy();
     }
 
     [Test]
@@ -810,7 +809,7 @@ namespace UnitTest
       Assert.AreEqual(EStateId.ACTIVE, inccall.StateId);
 
       // retrieve 1st call (HOLDING)
-      _manager.onUserHoldRetrieve(call.Session);
+      _manager.OnUserHoldRetrieve(call.Session);
       Assert.AreEqual(EStateId.HOLDING, call.StateId);
       Assert.AreEqual(EStateId.ACTIVE, inccall.StateId);
 
@@ -820,8 +819,8 @@ namespace UnitTest
       Assert.AreEqual(EStateId.ACTIVE, call.StateId);
       Assert.AreEqual(EStateId.HOLDING, inccall.StateId);
 
-      call.destroy();
-      inccall.destroy();
+      call.Destroy();
+      inccall.Destroy();
     }
 
 
@@ -830,7 +829,7 @@ namespace UnitTest
     {
       Assert.AreEqual(0, _manager.Count);
       // create a call instance
-      IStateMachine sm = _manager.createOutboundCall("1234");
+      IStateMachine sm = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       Assert.AreEqual(1, _manager.Count);
       // check if index match
       Assert.AreEqual(sm, _manager[sm.Session]);
@@ -843,7 +842,7 @@ namespace UnitTest
       Assert.AreEqual(EStateId.NULL, _manager[1].StateId);
 
       // Many call instances
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       IStateMachine sm2 = this.makeIncomingCall(2);
       // check if index match
       Assert.AreEqual(sm1, _manager[sm1.Session]);
@@ -857,7 +856,7 @@ namespace UnitTest
     [Test]
     public void testCallManagerStateIdIndexer()
     {
-      IStateMachine sm1 = _manager.createOutboundCall("1234");
+      IStateMachine sm1 = _manager[_manager.CreateSmartOutboundCall("1234", 0)];
       IStateMachine sm2 = this.makeIncomingCall(2);
 
       Assert.AreEqual(2, _manager.Count);

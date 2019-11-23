@@ -48,7 +48,7 @@ namespace Sipek.Common.CallControl
     private ECallType _callType ;
     private TimeSpan _duration;
     private DateTime _timestamp;
-    private CCallManager _manager;
+    private CallManager _manager;
     // Timers
     protected ITimer _noreplyTimer;
     protected ITimer _releasedTimer;
@@ -72,7 +72,7 @@ namespace Sipek.Common.CallControl
     /// <summary>
     /// A reference to CCallManager instance
     /// </summary>
-    public CCallManager Manager
+    public CallManager Manager
     {
       get { return _manager; }
     }
@@ -297,7 +297,7 @@ namespace Sipek.Common.CallControl
     public CStateMachine()
     {
       // store manager reference...
-      _manager = CCallManager.Instance;
+      _manager = CallManager.Instance;
 
       // create call proxy
       _sigProxy = _manager.StackProxy.createCallProxy();

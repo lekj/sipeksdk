@@ -1,0 +1,8 @@
+*.suo
+*.user
+/SipekSdk/obj
+/SipekSdk/Lib
+/packages
+/SimpleSoftphone/bin
+/SimpleSoftphone/obj
+/*.sdf

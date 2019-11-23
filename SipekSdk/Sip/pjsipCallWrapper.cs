@@ -51,43 +51,44 @@ namespace Sipek.Sip
 		internal const string PJSIP_DLL = "pjsipdll_tls.dll"; 
 #else
     internal const string PJSIP_DLL = "pjsipDll.dll";
+		private const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 #endif
 
     // call API
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_makeCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_makeCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_makeCall(int accountId, string uri);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_releaseCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_releaseCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_releaseCall(int callId);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_answerCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_answerCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_answerCall(int callId, int code);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_holdCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_holdCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_holdCall(int callId);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_retrieveCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_retrieveCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_retrieveCall(int callId);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_xferCall")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_xferCall", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_xferCall(int callId, string uri);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_xferCallWithReplaces")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_xferCallWithReplaces", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_xferCallWithReplaces(int callId, int dstSession);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_serviceReq")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_serviceReq", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_serviceReq(int callId, int serviceCode, string destUri);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_dialDtmf")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_dialDtmf", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_dialDtmf(int callId, string digits, int mode);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_getCurrentCodec")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_getCurrentCodec", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_getCurrentCodec(int callId, StringBuilder codec);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_makeConference")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_makeConference", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_makeConference(int callId);
-    [DllImport(PJSIP_DLL, EntryPoint = "dll_sendCallMessage")]
+    [DllImport(PJSIP_DLL, EntryPoint = "dll_sendCallMessage", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_sendCallMessage(int callId, string message);
 
     #endregion
 
     #region Callback Declarations
     // passing delegates to unmanaged code (.dll)
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallStateCallback(OnCallStateChanged cb);
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallIncoming(OnCallIncoming cb);
-    [DllImport(PJSIP_DLL)]
+    [DllImport(PJSIP_DLL, CallingConvention = CALLING_CONVENTION)]
     private static extern int onCallHoldConfirmCallback(OnCallHoldConfirm cb);
 
     // Static declaration because of CallbackonCollectedDelegate exception!

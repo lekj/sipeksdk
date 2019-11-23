@@ -41,13 +41,14 @@ namespace Sipek.Sip
 		internal const string PJSIP_DLL = "pjsipdll_tls.dll"; 
 #else
     internal const string PJSIP_DLL = "pjsipDll.dll";
+		private const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 #endif
 
-        [DllImport(PJSIP_DLL, EntryPoint = "dll_registerAccount")]
+		[DllImport(PJSIP_DLL, EntryPoint = "dll_registerAccount", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_registerAccount(string uri, string reguri, string domain, string username, string password, string proxy, bool isdefault);
-        [DllImport(PJSIP_DLL, EntryPoint = "dll_removeAccounts")]
+        [DllImport(PJSIP_DLL, EntryPoint = "dll_removeAccounts", CallingConvention = CALLING_CONVENTION)]
     private static extern int dll_removeAccounts();
-        [DllImportAttribute(PJSIP_DLL, EntryPoint = "onRegStateCallback")]
+        [DllImportAttribute(PJSIP_DLL, EntryPoint = "onRegStateCallback", CallingConvention = CALLING_CONVENTION)]
     private static extern int onRegStateCallback(OnRegStateChanged cb);
     
     #endregion
@@ -147,7 +148,7 @@ namespace Sipek.Sip
     /// <returns></returns>
     public override int unregisterAccounts()
     {
-      return dll_removeAccounts();
+		return dll_removeAccounts();
     }
 
     /// <summary>
